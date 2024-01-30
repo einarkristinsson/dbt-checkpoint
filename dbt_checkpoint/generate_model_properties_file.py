@@ -30,10 +30,6 @@ def append_to_properties_file(path: Path, model_schema: Dict[str, Any]) -> None:
     model_name = model_schema.get("name")  # pragma: no mutate
     with open(path, "w") as f:
         dump(file, f, default_flow_style=False, sort_keys=False)
-        print(
-            f"{path}: the schema of the `{model_name}` model was appended to the file."
-        )
-
 
 def write_to_properties_file(path: Path, model_schema: Dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -104,8 +100,7 @@ def generate_properties_file(
             "schema": model.node.get("schema"),
             "alias": model.node.get("alias"),
             "name": model.node.get("name"),
-            "path": model.node.get("path"),
-            
+            "model_directory": os.path.dirname( model.node.get("path")),
         }        
         print(
             f"====> generate_properties_file path: Template `{template}` model was written to the file. Name `"
@@ -129,7 +124,7 @@ def main(argv: Optional[Sequence[str]] = None) -> Dict[str, Any]:
         type=str,
         help="""Location of file where new model properties should
         be generated. Suffix has to be `yml` or `yaml`. It can also include
-        {database}, {schema}, {name} and {alias} variables.
+        {database}, {schema}, {name} , {alias}  and {model_directory} variables.
         E.g. /models/{schema}/{name}.yml for model `foo.bar` will create
         properties file in /models/foo/bar.yml.
         """,
