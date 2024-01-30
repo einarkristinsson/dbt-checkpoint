@@ -108,7 +108,7 @@ def generate_properties_file(
             
         }        
         print(
-            f"====> generate_properties_file path: model `{model.node.get("path"),}` model was written to the file. Name :  `{model.node.get("name")}`"
+            f"====> generate_properties_file path: Template `{template}` model was written to the file. Name `"
         )
 
         path_template = {k: v for k, v in template.items() if v}
