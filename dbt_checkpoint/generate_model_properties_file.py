@@ -104,9 +104,13 @@ def generate_properties_file(
             "schema": model.node.get("schema"),
             "alias": model.node.get("alias"),
             "name": model.node.get("name"),
+            "path": model.node.get("path"),
+            
         }        
         print(
-            f"====> generate_properties_file : model `{model}` model was written to the file."
+            f"====> generate_properties_file path: model `{model.node.get("path"),}` model was written to the file.
+             Name :  `{model.node.get("name"),}` 
+            "
         )
 
         path_template = {k: v for k, v in template.items() if v}
