@@ -106,7 +106,7 @@ def generate_properties_file(
             "name": model.node.get("name"),
         }        
         print(
-            f" debug : : the schema of the `{model_prop}` model was written to the file."
+            f"====> generate_properties_file : model `{model}` model was written to the file."
         )
 
         path_template = {k: v for k, v in template.items() if v}
