@@ -62,6 +62,10 @@ def get_model_properties(model: Model, catalog_nodes: Dict[str, Any]) -> Dict[st
     result: Dict[str, Any] = {}
     if not model.node.get("patch_path"):
         result["name"] = model.model_name
+        print(
+            f" debug : : the schema of the `{model.model_name}` model was written to the file."
+        )
+
         catalog_node = catalog_nodes.get(model.model_id, {})
         if catalog_node:
             catalog_cols = [
@@ -100,7 +104,11 @@ def generate_properties_file(
             "schema": model.node.get("schema"),
             "alias": model.node.get("alias"),
             "name": model.node.get("name"),
-        }
+        }        
+        print(
+            f" debug : : the schema of the `{model_prop}` model was written to the file."
+        )
+
         path_template = {k: v for k, v in template.items() if v}
         if model_prop:
             status_code = 1

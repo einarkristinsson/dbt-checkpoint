@@ -140,3 +140,5 @@ manifest.json
 # Mutmut
 html
 .mutmut-cache
+
+.venv-py312
