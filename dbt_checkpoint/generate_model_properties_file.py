@@ -2,21 +2,24 @@ import argparse
 import os
 import time
 from pathlib import Path
-from typing import Any, Dict, Optional, Sequence
+from typing import Any
+from typing import cast
+from typing import Dict
+from typing import Optional
+from typing import Sequence
 
-from yaml import dump, safe_load
+from yaml import dump
+from yaml import safe_load
 
 from dbt_checkpoint.tracking import dbtCheckpointTracking
-from dbt_checkpoint.utils import (
-    JsonOpenError,
-    Model,
-    add_catalog_args,
-    add_default_args,
-    get_dbt_catalog,
-    get_dbt_manifest,
-    get_filenames,
-    get_models,
-)
+from dbt_checkpoint.utils import add_catalog_args
+from dbt_checkpoint.utils import add_default_args
+from dbt_checkpoint.utils import get_dbt_catalog
+from dbt_checkpoint.utils import get_dbt_manifest
+from dbt_checkpoint.utils import get_filenames
+from dbt_checkpoint.utils import get_models
+from dbt_checkpoint.utils import JsonOpenError
+from dbt_checkpoint.utils import Model
 
 
 def append_to_properties_file(path: Path, model_schema: Dict[str, Any]) -> None:
@@ -27,9 +30,9 @@ def append_to_properties_file(path: Path, model_schema: Dict[str, Any]) -> None:
         model = []
         file["models"] = model
     model.append(model_schema)
-    model_name = model_schema.get("name")  # pragma: no mutate
     with open(path, "w") as f:
         dump(file, f, default_flow_style=False, sort_keys=False)
+
 
 def write_to_properties_file(path: Path, model_schema: Dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -58,7 +61,7 @@ def get_model_properties(model: Model, catalog_nodes: Dict[str, Any]) -> Dict[st
     result: Dict[str, Any] = {}
     if not model.node.get("patch_path"):
         result["name"] = model.model_name
-        
+
         catalog_node = catalog_nodes.get(model.model_id, {})
         if catalog_node:
             catalog_cols = [
@@ -92,14 +95,14 @@ def generate_properties_file(
 
     for model in models:
         model_prop = get_model_properties(model, catalog_nodes)
-        model_dir = os.path.dirname( model.node.get("path"))
+        model_dir = os.path.dirname(cast(Path, model.node.get("path")))
         template = {
             "database": model.node.get("database"),
             "schema": model.node.get("schema"),
             "alias": model.node.get("alias"),
             "name": model.node.get("name"),
             "model_directory": model_dir,
-        } 
+        }
 
         path_template = {k: v for k, v in template.items() if v}
         if model_prop:
@@ -132,19 +135,19 @@ def main(argv: Optional[Sequence[str]] = None) -> Dict[str, Any]:
             "Input parameter `--schema-file` has to"
             " contain `.yml` or `.yaml` extension."
         )
-        return 1
+        exit(1)
 
     try:
         manifest = get_dbt_manifest(args)
     except JsonOpenError as e:
         print(f"Unable to load manifest file ({e})")
-        return 1
+        exit(1)
 
     try:
         catalog = get_dbt_catalog(args)
     except JsonOpenError as e:
         print(f"Unable to load catalog file ({e})")
-        return 1
+        exit(1)
 
     start_time = time.time()
     hook_properties = generate_properties_file(
@@ -170,7 +173,7 @@ def main(argv: Optional[Sequence[str]] = None) -> Dict[str, Any]:
         },
     )
 
-    return hook_properties.get("status_code")
+    exit(hook_properties.get("status_code"))
 
 
 if __name__ == "__main__":
